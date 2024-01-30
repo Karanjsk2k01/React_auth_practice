@@ -20,57 +20,60 @@ const AuthForm = () => {
     const enteredEmail = emailRef.current.value;
     const enteredPassword = passwordRef.current.value;
 
+    let url;
+
     if (isLogin) {
-      //...
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBxqP5SfeSM8fgzRarxiwEgZ4kJ5v7JZsA'
     }
     else {
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBxqP5SfeSM8fgzRarxiwEgZ4kJ5v7JZsA'
+    }
 
-      try {
+    try {
 
-        setloader(prev => !prev);
+      setloader(prev => !prev);
 
-        const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBxqP5SfeSM8fgzRarxiwEgZ4kJ5v7JZsA', {
-          method: 'POST',
-          body: JSON.stringify({
-            email: enteredEmail,
-            password: enteredPassword,
-            returnSecureToken: true,
-          }),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-
-        if (!response.ok) {
-
-          let data = await response.json()
-
-          let message = 'authentication failes try after sometime..'
-
-          if (data && data.error && data.error.message) {
-            message = data.error.message
-
-            alert(message)
-          }
-
+      const response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+          email: enteredEmail,
+          password: enteredPassword,
+          returnSecureToken: true,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
         }
+      })
 
-        const successUser = await response.json();
+      if (!response.ok) {
 
-        console.log(successUser)
+        let data = await response.json()
 
-        setloader(prev => !prev);
-
-      }
-      catch (error) {
-
-        console.log(error)
+        throw new Error(data.error.message)
 
       }
+
+      const successUser = await response.json();
+
+      console.log(successUser.idToken)
+
+      setloader(prev => !prev);
+
+      e.target.reset()
+
+    }
+    catch (error) {
+
+      alert(error)
+
+      setloader(prev => !prev);
+
+      e.target.reset()
+
+
     }
 
   }
-
 
   return (
     <section className={classes.auth}>
