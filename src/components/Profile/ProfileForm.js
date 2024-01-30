@@ -1,11 +1,13 @@
 import AuthContext from '../store/Auth-context';
 import classes from './ProfileForm.module.css';
 import { useContext, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 
 const ProfileForm = () => {
 
   const passwordRef = useRef()
-  const contextValue = useContext(AuthContext)
+  const contextValue = useContext(AuthContext);
+  const history = useHistory();
 
   const passwordChangeHandler = async (e, token) => {
     e.preventDefault();
@@ -32,7 +34,14 @@ const ProfileForm = () => {
         }
 
         const { idToken } = await response.json();
-        console.log(idToken);
+
+        if (idToken) {
+          alert('Password Changed successfully')
+
+          history.push('/')
+        }
+
+
       }
     } catch (error) {
       alert(error.message);

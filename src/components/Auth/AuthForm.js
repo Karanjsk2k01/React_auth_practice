@@ -65,8 +65,8 @@ const AuthForm = () => {
       e.target.reset();
 
       //redirect to homepage
+      if (isLogin && response.ok) { history.push('/') }
 
-      history.push('/')
 
       setloader(prev => !prev);
 

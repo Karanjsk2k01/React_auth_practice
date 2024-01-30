@@ -1,3 +1,4 @@
+import { toBeEmpty } from "@testing-library/jest-dom/dist/matchers";
 import React, { createContext, useState } from "react";
 
 
@@ -13,16 +14,22 @@ const AuthContext = React.createContext({
 
 export const AuthProvider = (props) => {
 
-  const [token, settoken] = useState(null);
+  let initialtoken = localStorage.getItem('token')
+
+  const [token, settoken] = useState(initialtoken);
 
   const isLoggenIn = !!token;
 
   const loginHandler = (token) => {
     settoken(token);
+
+    localStorage.setItem('token', token)
   }
 
   const logoutHandler = () => {
     settoken('');
+
+    localStorage.removeItem('token')
   }
 
   const contextValue = {
