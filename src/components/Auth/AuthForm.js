@@ -1,10 +1,15 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import classes from './AuthForm.module.css';
+import AuthContext from '../store/Auth-context';
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loader, setloader] = useState(false);
+
+  const contextValue = useContext(AuthContext);
+  const history = useHistory();
 
   let emailRef = useRef();
   let passwordRef = useRef();
@@ -55,11 +60,15 @@ const AuthForm = () => {
 
       const successUser = await response.json();
 
-      console.log(successUser.idToken)
+      contextValue.login(successUser.idToken)
+
+      e.target.reset();
+
+      //redirect to homepage
+
+      history.push('/')
 
       setloader(prev => !prev);
-
-      e.target.reset()
 
     }
     catch (error) {
