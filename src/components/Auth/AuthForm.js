@@ -18,6 +18,7 @@ const AuthForm = () => {
     setIsLogin((prevState) => !prevState);
   };
 
+
   const submitHandler = async (e) => {
 
     e.preventDefault();

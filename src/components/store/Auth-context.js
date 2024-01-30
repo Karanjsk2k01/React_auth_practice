@@ -1,5 +1,5 @@
 import { toBeEmpty } from "@testing-library/jest-dom/dist/matchers";
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 
 const AuthContext = React.createContext({
@@ -15,8 +15,32 @@ const AuthContext = React.createContext({
 export const AuthProvider = (props) => {
 
   let initialtoken = localStorage.getItem('token')
-
   const [token, settoken] = useState(initialtoken);
+
+
+  useEffect(() => {
+    if (token) {
+      const timeout = setTimeout(() => {
+        localStorage.setItem('expiredToken', token)
+      }, 5 * 60 * 1000);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [token]);
+
+
+  useEffect(() => {
+
+    const expiredToken = localStorage.getItem('expiredToken')
+    const initialtoken = localStorage.getItem('token')
+
+    if (expiredToken === initialtoken) {
+      logoutHandler()
+    }
+  }, [])
+
 
   const isLoggenIn = !!token;
 
@@ -24,12 +48,13 @@ export const AuthProvider = (props) => {
     settoken(token);
 
     localStorage.setItem('token', token)
+
   }
 
   const logoutHandler = () => {
     settoken('');
-
     localStorage.removeItem('token')
+    localStorage.removeItem('expiredToken')
   }
 
   const contextValue = {
